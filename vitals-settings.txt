@@ -1,0 +1,19 @@
+[/]
+alphabetize=true
+fixed-widths=true
+hide-icons=true
+hot-sensors=['_fan_asus_cpu_fan_', '_fan_asus_gpu_fan_', '_gpu#1_power_', '_gpu#1_temperature_', '_gpu#1_utilization_', '_memory_allocated_', '_processor_cpu_package power_', '_processor_frequency_', '_processor_usage_', '_temperature_processor_0_']
+icon-style=1
+include-public-ip=true
+include-static-gpu-info=true
+include-static-info=true
+menu-centered=true
+panel-groups='[{"name":"CPU","sensors":["_temperature_processor_0_","_processor_usage_","_processor_frequency_","_processor_cpu_package power_","_fan_asus_cpu_fan_"]},{"name":"GPU","sensors":["_gpu#1_temperature_","_gpu#1_utilization_","_gpu#1_power_","_fan_asus_gpu_fan_","_gpu#1_frequency_"]},{"name":"RAM","sensors":["_memory_allocated_"]}]'
+position-in-panel=2
+show-battery=true
+show-gpu=true
+show-group-labels=true
+show-network=true
+show-temperature=true
+update-time=1
+use-higher-precision=false
