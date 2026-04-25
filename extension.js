@@ -42,7 +42,8 @@ var VitalsMenuButton = GObject.registerClass({
                            'icon-tx': 'network-upload-symbolic.svg' },
                 'storage' : { 'icon': 'storage-symbolic.svg' },
                 'battery' : { 'icon': 'battery-symbolic.svg' },
-                    'gpu' : { 'icon': 'gpu-symbolic.svg' }
+                    'gpu' : { 'icon': 'gpu-symbolic.svg' },
+                    'fps' : { 'icon': 'system-symbolic.svg' }
         }
 
         // list with the prefixes for the according themes, the index of each 
@@ -254,6 +255,8 @@ var VitalsMenuButton = GObject.registerClass({
     }
 
     _createHotItem(key, value) {
+        if (this._hotItems[key]) return; // prevent duplicate rendering
+
         let item = new St.BoxLayout({
             style_class: 'vitals-panel-item',
         });

@@ -49,7 +49,7 @@ const Settings = new GObject.Class({
                         'alphabetize', 'hide-zeros', 'include-public-ip',
                         'show-battery', 'fixed-widths', 'hide-icons', 
                         'show-group-labels', 'menu-centered', 'include-static-info', 
-                        'show-gpu', 'include-static-gpu-info' ];
+                        'show-gpu', 'include-static-gpu-info', 'show-fps' ];
 
         for (let key in sensors) {
             let sensor = sensors[key];
@@ -130,7 +130,9 @@ const Settings = new GObject.Class({
 
         // Listen for external changes to panel-groups setting
         this._settings.connect('changed::panel-groups', () => {
-            this._rebuildGroupRows();
+            if (!this._isSavingPanelGroups) {
+                this._rebuildGroupRows();
+            }
         });
     },
 
@@ -158,19 +160,23 @@ const Settings = new GObject.Class({
                 margin_end: 8,
             });
 
-            // Group name entry (editable)
-            let entry = new Gtk.Entry({
-                text: group.name,
+            // Group name label
+            let nameLabel = new Gtk.Label({
+                label: group.name,
                 hexpand: true,
-                placeholder_text: 'Group name',
+                halign: Gtk.Align.START
             });
             let groupIndex = i;
-            entry.connect('changed', (widget) => {
-                let g = this._getPanelGroups();
-                if (groupIndex < g.length) {
-                    g[groupIndex].name = widget.get_text();
-                    this._savePanelGroups(g, false);
-                }
+            
+            let editBtn = new Gtk.Button({ icon_name: 'document-edit-symbolic', has_frame: false });
+            editBtn.connect('clicked', () => {
+                this._showNameDialog('Edit Group Name', group.name, (newName) => {
+                    let g = this._getPanelGroups();
+                    if (groupIndex < g.length) {
+                        g[groupIndex].name = newName;
+                        this._savePanelGroups(g, true);
+                    }
+                });
             });
 
             // Sensor count label
@@ -217,13 +223,16 @@ const Settings = new GObject.Class({
                 }
             });
 
-            row.append(entry);
+            row.append(nameLabel);
+            row.append(editBtn);
             row.append(countLabel);
             row.append(upBtn);
             row.append(downBtn);
             row.append(delBtn);
 
-            this._groupContainer.append(row);
+            let listRow = new Gtk.ListBoxRow({ selectable: false, focusable: false });
+            listRow.set_child(row);
+            this._groupContainer.append(listRow);
         }
 
         // Add "New Group" row
@@ -236,34 +245,59 @@ const Settings = new GObject.Class({
             margin_end: 8,
         });
 
-        let newEntry = new Gtk.Entry({
-            hexpand: true,
-            placeholder_text: 'New group name...',
-        });
-
-        let addBtn = new Gtk.Button({ label: '+ Add Group' });
+        let addBtn = new Gtk.Button({ label: '+ Add Group', hexpand: true });
         addBtn.add_css_class('suggested-action');
         addBtn.connect('clicked', () => {
-            let name = newEntry.get_text().trim();
-            if (name) {
+            this._showNameDialog('New Group', '', (name) => {
                 let g = this._getPanelGroups();
                 g.push({ name: name, sensors: [] });
                 this._savePanelGroups(g, true);
-            }
-        });
-        // Enter key in entry also adds group
-        newEntry.connect('activate', () => {
-            let name = newEntry.get_text().trim();
-            if (name) {
-                let g = this._getPanelGroups();
-                g.push({ name: name, sensors: [] });
-                this._savePanelGroups(g, true);
-            }
+            });
         });
 
-        addRow.append(newEntry);
         addRow.append(addBtn);
-        this._groupContainer.append(addRow);
+        let addListRow = new Gtk.ListBoxRow({ selectable: false, focusable: false });
+        addListRow.set_child(addRow);
+        this._groupContainer.append(addListRow);
+    },
+
+    _showNameDialog: function(title, initialName, callback) {
+        let transientObj = this.widget.get_root();
+        let dialog = new Gtk.Dialog({
+            title: title,
+            transient_for: transientObj,
+            use_header_bar: 1,
+            modal: true
+        });
+
+        let entry = new Gtk.Entry({
+            text: initialName,
+            margin_top: 12,
+            margin_bottom: 12,
+            margin_start: 12,
+            margin_end: 12,
+            activates_default: true,
+            width_request: 250
+        });
+
+        dialog.get_content_area().append(entry);
+
+        dialog.add_button('Cancel', Gtk.ResponseType.CANCEL);
+        let saveBtn = dialog.add_button('Save', Gtk.ResponseType.OK);
+        saveBtn.add_css_class('suggested-action');
+        dialog.set_default_response(Gtk.ResponseType.OK);
+
+        dialog.connect('response', (dlg, response) => {
+            if (response === Gtk.ResponseType.OK) {
+                let text = entry.get_text().trim();
+                if (text) {
+                    callback(text);
+                }
+            }
+            dlg.destroy();
+        });
+
+        dialog.show();
     },
 
     _getPanelGroups: function() {
@@ -275,7 +309,9 @@ const Settings = new GObject.Class({
     },
 
     _savePanelGroups: function(groups, rebuild) {
+        this._isSavingPanelGroups = true;
         this._settings.set_string('panel-groups', JSON.stringify(groups));
+        this._isSavingPanelGroups = false;
         if (rebuild) this._rebuildGroupRows();
     },
 });

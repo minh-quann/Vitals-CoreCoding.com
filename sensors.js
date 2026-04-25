@@ -589,6 +589,11 @@ export const Sensors = GObject.registerClass({
         }
     }
 
+    _queryFps(callback) {
+        if (this._frameMonitorCurrentHz > 0)
+            this._returnValue(callback, 'FPS', this._frameMonitorCurrentHz, 'fps', 'fps');
+    }
+
     _queryGpu(callback) {
         if (this._frameMonitorCurrentHz > 0)
             this._returnValue(callback, 'Refresh Rate', this._frameMonitorCurrentHz, 'gpu#1', 'hertz');

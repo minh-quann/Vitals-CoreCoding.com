@@ -61,6 +61,11 @@
       <summary>Monitor processor</summary>
       <description>Display processor information</description>
     </key>
+    <key type="b" name="show-fps">
+      <default>true</default>
+      <summary>Monitor FPS</summary>
+      <description>Display frame rate</description>
+    </key>
     <key type="b" name="show-system">
       <default>true</default>
       <summary>Monitor system</summary>

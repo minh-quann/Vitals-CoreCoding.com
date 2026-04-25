@@ -95,6 +95,10 @@ export const Values = GObject.registerClass({
                 format = ((value >= 0) ? '+' : '-') + ((use_higher_precision)?'%.2f %s':'%.1f %s');
                 ending = 'V';
                 break;
+            case 'fps':
+                format = (use_higher_precision)?'%.1f':'%d';
+                ending = '';
+                break;
             case 'hertz':
                 if (value > 0) {
                     exp = Math.floor(Math.log(value) / Math.log(unit));
