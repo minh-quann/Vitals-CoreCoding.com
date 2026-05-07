@@ -61,11 +61,6 @@
       <summary>Monitor processor</summary>
       <description>Display processor information</description>
     </key>
-    <key type="b" name="show-fps">
-      <default>true</default>
-      <summary>Monitor FPS</summary>
-      <description>Display frame rate</description>
-    </key>
     <key type="b" name="show-system">
       <default>true</default>
       <summary>Monitor system</summary>
@@ -85,6 +80,14 @@
       <default>true</default>
       <summary>Include public IP address</summary>
       <description>Display public IP address of internet connection</description>
+    </key>
+    <key type="i" name="network-public-ip-interval">
+      <default>60</default>
+      <summary>Public IP refresh interval in minutes</summary>
+    </key>
+    <key name="network-public-ip-show-flag" type="b">
+        <default>true</default>
+        <summary>Show country flag for public IP</summary>
     </key>
     <key type="i" name="network-speed-format">
       <default>0</default>
@@ -151,10 +154,10 @@
       <summary>Include GPU static information</summary>
       <description>Display GPU static information that doesn't change</description>
     </key>
-    <key type="i" name="icon-style">
-      <default>0</default>
-      <summary>Icon styles</summary>
-      <description>Set the style for the displayed sensor icons ('original', 'updated')</description>
+    <key type="b" name="show-fps">
+      <default>true</default>
+      <summary>Monitor FPS</summary>
+      <description>Display frame rate</description>
     </key>
     <key type="b" name="show-group-labels">
       <default>false</default>
@@ -165,6 +168,11 @@
       <default>'[{"name":"CPU","sensors":["_temperature_processor_0_","_processor_usage_","_processor_frequency_","_processor_cpu_package_power_","_fan_asus_cpu_fan_"]},{"name":"GPU","sensors":["_gpu#1_temperature_","_gpu#1_utilization_","_gpu#1_power_","_fan_asus_gpu_fan_"]},{"name":"RAM","sensors":["_memory_allocated_"]}]'</default>
       <summary>Panel sensor groups</summary>
       <description>JSON array of groups. Each group has a "name" and "sensors" array of sensor keys to display together on the panel bar.</description>
+    </key>
+    <key type="i" name="icon-style">
+      <default>0</default>
+      <summary>Icon styles</summary>
+      <description>Set the style for the displayed sensor icons ('original', 'updated')</description>
     </key>
   </schema>
 </schemalist>
