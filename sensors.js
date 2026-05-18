@@ -294,7 +294,9 @@ export const Sensors = GObject.registerClass({
                     if (deltaTime > 0) {
                         // energy_uj is in microjoules, convert to watts: W = uJ / (s * 1000000)
                         let power = deltaEnergy / (deltaTime * 1000000);
-                        this._returnValue(callback, 'CPU Package Power', power, 'processor', 'watt-gpu');
+                        if (power >= 0 && power <= 4000) {
+                            this._returnValue(callback, 'CPU Package Power', power, 'processor', 'watt-gpu');
+                        }
                     }
                 }
 
