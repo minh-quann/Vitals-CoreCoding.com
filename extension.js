@@ -740,6 +740,13 @@ var VitalsMenuButton = GObject.registerClass({
                 if (width2 > this._widths[key]) {
                     this._hotLabels[key].set_width(width2);
                     this._widths[key] = width2;
+                } else if (width2 < this._widths[key]) {
+                    // Gradually shrink stored width toward current text width
+                    // to recover from spike values that inflated the width
+                    let newWidth = Math.ceil(width2 + (this._widths[key] - width2) * 0.5);
+                    if (newWidth <= width2 + 1) newWidth = width2;
+                    this._hotLabels[key].set_width(newWidth);
+                    this._widths[key] = newWidth;
                 }
             }
         }

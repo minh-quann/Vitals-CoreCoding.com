@@ -882,6 +882,13 @@ export const Sensors = GObject.registerClass({
         if (typeof value === 'number' && !Number.isFinite(value))
             return;
 
+        // Reject absurd watt readings from any sensor (e.g. RAPL counter resets)
+        if ((format === 'watt' || format === 'watt-gpu') && typeof value === 'number') {
+            // watt format uses raw uW values, watt-gpu uses plain watts
+            let watts = (format === 'watt') ? value / 1000000 : value;
+            if (watts < -1 || watts > 4000) return;
+        }
+
         callback(label, value, type, format);
     }
 
